@@ -460,7 +460,7 @@ function ProjectCard({ project }) {
   }, [project.id])
 
   return (
-    <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+    <Link to={`/project/${project.id}/${project.category.toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
       <div
         className="portfolio-card-bg"
         style={{
@@ -1188,7 +1188,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/projects/:id" element={<ProjectDetailPage />} />
+        <Route path="/project/:id/:category" element={<ProjectDetailPage />} />
       </Routes>
       <Contact />
       <Footer />

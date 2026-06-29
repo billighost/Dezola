@@ -14,7 +14,7 @@ function ProjectCard({ project }) {
   }, [project.id])
 
   return (
-    <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+    <Link to={`/project/${project.id}/${project.category.toLowerCase()}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
       <div
         className="portfolio-card-bg"
         style={{

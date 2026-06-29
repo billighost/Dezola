@@ -6,12 +6,13 @@ import { Helmet } from 'react-helmet-async'
 import { HiArrowLeft, HiArrowRight } from 'react-icons/hi'
 
 export default function ProjectDetailPage() {
-  const { id } = useParams()
-  const currentIndex = PROJECTS.findIndex(p => p.id === id)
+  const { id, category } = useParams()
+  const currentIndex = PROJECTS.findIndex(p => p.id === id && p.category.toLowerCase() === category?.toLowerCase())
   const project = PROJECTS[currentIndex]
   
   const prevProject = currentIndex > 0 ? PROJECTS[currentIndex - 1] : null
   const nextProject = currentIndex >= 0 && currentIndex < PROJECTS.length - 1 ? PROJECTS[currentIndex + 1] : null
+
 
   const galleryRef = useRef(null)
   const isDragging = useRef(false)
@@ -233,6 +234,33 @@ export default function ProjectDetailPage() {
         </div>
       </div>
 
+      {/* Section B.5 — Deliverables */}
+      {project.deliverables && project.deliverables.length > 0 && (
+        <motion.div 
+          className="project-deliverables-section"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+          style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 5%', borderTop: '1px solid rgba(200, 169, 126, 0.2)' }}
+        >
+          <div className="gold-accent-line" />
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', marginBottom: '24px' }}>
+            What we delivered for {project.category}
+          </h2>
+          <p style={{ fontSize: '18px', opacity: 0.8, marginBottom: '32px', maxWidth: '800px' }}>
+            For this engagement, our team focused on providing top-tier {project.category.toLowerCase()} services to ensure {clientName} achieved their business goals. Here are the key deliverables we provided:
+          </p>
+          <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', listStyle: 'none', padding: 0 }}>
+            {project.deliverables.map((item, i) => (
+              <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                <span style={{ color: 'var(--gold)' }}>✓</span> {item}
+              </li>
+            ))}
+          </ul>
+        </motion.div>
+      )}
+
       {/* Section C — Screenshot Gallery */}
       <motion.div 
         className="project-gallery-section"
@@ -306,7 +334,7 @@ export default function ProjectDetailPage() {
         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
       >
         <Link 
-          to={prevProject ? `/projects/${prevProject.id}` : '#'} 
+          to={prevProject ? `/project/${prevProject.id}/${prevProject.category.toLowerCase()}` : '#'} 
           className="project-prev-link"
           style={!prevProject ? { opacity: 0.2, pointerEvents: 'none' } : {}}
         >
@@ -315,7 +343,7 @@ export default function ProjectDetailPage() {
         </Link>
         
         <Link 
-          to={nextProject ? `/projects/${nextProject.id}` : '#'} 
+          to={nextProject ? `/project/${nextProject.id}/${nextProject.category.toLowerCase()}` : '#'} 
           className="project-next-link"
           style={!nextProject ? { opacity: 0.2, pointerEvents: 'none' } : {}}
         >
