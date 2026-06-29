@@ -676,6 +676,8 @@ function Testimonials() {
   const startX = useRef(0)
   const scrollLeft = useRef(0)
 
+  const scrollTimeout = useRef(null)
+
   // Infinite array: triple the items
   const extendedTestimonials = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS]
 
@@ -701,6 +703,7 @@ function Testimonials() {
     if (galleryRef.current) {
       galleryRef.current.style.cursor = 'grabbing'
       galleryRef.current.style.scrollBehavior = 'auto'
+      galleryRef.current.style.scrollSnapType = 'none'
     }
   }
 
@@ -709,6 +712,7 @@ function Testimonials() {
     if (galleryRef.current) {
       galleryRef.current.style.cursor = 'grab'
       galleryRef.current.style.scrollBehavior = 'smooth'
+      galleryRef.current.style.scrollSnapType = 'x mandatory'
     }
   }
 
@@ -717,6 +721,7 @@ function Testimonials() {
     if (galleryRef.current) {
       galleryRef.current.style.cursor = 'grab'
       galleryRef.current.style.scrollBehavior = 'smooth'
+      galleryRef.current.style.scrollSnapType = 'x mandatory'
     }
   }
 
@@ -730,27 +735,44 @@ function Testimonials() {
 
   const handleScroll = () => {
     if (!galleryRef.current) return
-    const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
-    if (cardWidth === 0) return
-    const gap = 24
-    const oneSetWidth = TESTIMONIALS.length * (cardWidth + gap)
     
-    // Seamless loop: if we scroll too far left, jump to middle set
-    if (galleryRef.current.scrollLeft <= (cardWidth / 2)) {
-      galleryRef.current.style.scrollBehavior = 'auto'
-      galleryRef.current.scrollLeft += oneSetWidth
-      requestAnimationFrame(() => {
-        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
-      })
-    } 
-    // If we scroll too far right, jump back to middle set
-    else if (galleryRef.current.scrollLeft >= oneSetWidth * 2 - (cardWidth / 2)) {
-      galleryRef.current.style.scrollBehavior = 'auto'
-      galleryRef.current.scrollLeft -= oneSetWidth
-      requestAnimationFrame(() => {
-        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
-      })
-    }
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
+    
+    scrollTimeout.current = setTimeout(() => {
+      if (!galleryRef.current) return
+      
+      const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
+      if (cardWidth === 0) return
+      const gap = 24
+      const oneSetWidth = TESTIMONIALS.length * (cardWidth + gap)
+      
+      // Seamless loop: if we scroll too far left, jump to middle set silently
+      if (galleryRef.current.scrollLeft <= cardWidth) {
+        galleryRef.current.style.scrollSnapType = 'none'
+        galleryRef.current.style.scrollBehavior = 'auto'
+        galleryRef.current.scrollLeft += oneSetWidth
+        
+        setTimeout(() => {
+          if (galleryRef.current) {
+            galleryRef.current.style.scrollBehavior = 'smooth'
+            galleryRef.current.style.scrollSnapType = 'x mandatory'
+          }
+        }, 50)
+      } 
+      // If we scroll too far right, jump back to middle set silently
+      else if (galleryRef.current.scrollLeft >= oneSetWidth * 2 - cardWidth) {
+        galleryRef.current.style.scrollSnapType = 'none'
+        galleryRef.current.style.scrollBehavior = 'auto'
+        galleryRef.current.scrollLeft -= oneSetWidth
+        
+        setTimeout(() => {
+          if (galleryRef.current) {
+            galleryRef.current.style.scrollBehavior = 'smooth'
+            galleryRef.current.style.scrollSnapType = 'x mandatory'
+          }
+        }, 50)
+      }
+    }, 150)
   }
 
   const scrollGallery = (direction) => {

@@ -17,13 +17,28 @@ export default function ProjectDetailPage() {
   const isDragging = useRef(false)
   const startX = useRef(0)
   const scrollLeft = useRef(0)
+  const scrollTimeout = useRef(null)
   
   const [currentSlide, setCurrentSlide] = useState(1)
   const totalSlides = project?.screenshots?.length || 1
 
+  const extendedScreenshots = project?.screenshots ? [...project.screenshots, ...project.screenshots, ...project.screenshots] : []
+
   useEffect(() => {
     window.scrollTo(0, 0)
-  }, [id])
+    
+    if (galleryRef.current && totalSlides > 0) {
+      const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
+      const gap = 16
+      const oneSetWidth = totalSlides * (cardWidth + gap)
+      galleryRef.current.style.scrollBehavior = 'auto'
+      galleryRef.current.scrollLeft = oneSetWidth
+      
+      requestAnimationFrame(() => {
+        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
+      })
+    }
+  }, [id, totalSlides])
 
   if (!project) {
     return (
@@ -38,17 +53,29 @@ export default function ProjectDetailPage() {
     isDragging.current = true
     startX.current = e.pageX - galleryRef.current.offsetLeft
     scrollLeft.current = galleryRef.current.scrollLeft
-    if (galleryRef.current) galleryRef.current.style.cursor = 'grabbing'
+    if (galleryRef.current) {
+      galleryRef.current.style.cursor = 'grabbing'
+      galleryRef.current.style.scrollBehavior = 'auto'
+      galleryRef.current.style.scrollSnapType = 'none'
+    }
   }
 
   const handleMouseLeave = () => {
     isDragging.current = false
-    if (galleryRef.current) galleryRef.current.style.cursor = 'grab'
+    if (galleryRef.current) {
+      galleryRef.current.style.cursor = 'grab'
+      galleryRef.current.style.scrollBehavior = 'smooth'
+      galleryRef.current.style.scrollSnapType = 'x mandatory'
+    }
   }
 
   const handleMouseUp = () => {
     isDragging.current = false
-    if (galleryRef.current) galleryRef.current.style.cursor = 'grab'
+    if (galleryRef.current) {
+      galleryRef.current.style.cursor = 'grab'
+      galleryRef.current.style.scrollBehavior = 'smooth'
+      galleryRef.current.style.scrollSnapType = 'x mandatory'
+    }
   }
 
   const handleMouseMove = (e) => {
@@ -64,7 +91,43 @@ export default function ProjectDetailPage() {
     const scrollPos = galleryRef.current.scrollLeft
     const cardWidth = galleryRef.current.children[0]?.offsetWidth || 1
     const newIndex = Math.round(scrollPos / cardWidth) + 1
-    setCurrentSlide(Math.min(Math.max(newIndex, 1), totalSlides))
+    
+    let actualIndex = newIndex % totalSlides
+    if (actualIndex === 0) actualIndex = totalSlides
+    setCurrentSlide(actualIndex)
+
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
+    
+    scrollTimeout.current = setTimeout(() => {
+      if (!galleryRef.current) return
+      
+      const gap = 16
+      const oneSetWidth = totalSlides * (cardWidth + gap)
+      
+      if (galleryRef.current.scrollLeft <= cardWidth) {
+        galleryRef.current.style.scrollSnapType = 'none'
+        galleryRef.current.style.scrollBehavior = 'auto'
+        galleryRef.current.scrollLeft += oneSetWidth
+        
+        setTimeout(() => {
+          if (galleryRef.current) {
+            galleryRef.current.style.scrollBehavior = 'smooth'
+            galleryRef.current.style.scrollSnapType = 'x mandatory'
+          }
+        }, 50)
+      } else if (galleryRef.current.scrollLeft >= oneSetWidth * 2 - cardWidth) {
+        galleryRef.current.style.scrollSnapType = 'none'
+        galleryRef.current.style.scrollBehavior = 'auto'
+        galleryRef.current.scrollLeft -= oneSetWidth
+        
+        setTimeout(() => {
+          if (galleryRef.current) {
+            galleryRef.current.style.scrollBehavior = 'smooth'
+            galleryRef.current.style.scrollSnapType = 'x mandatory'
+          }
+        }, 50)
+      }
+    }, 150)
   }
   
   const scrollGallery = (direction) => {
@@ -196,19 +259,19 @@ export default function ProjectDetailPage() {
                 Gallery coming soon
               </span>
             </div>
-          ) : project.screenshots.map((shot, idx) => (
+          ) : extendedScreenshots.map((shot, idx) => (
             <div key={idx} className="project-gallery-card" style={{ background: shot.type === 'image' ? '#111' : shot.color }}>
               {shot.type === 'image' ? (
                 <img
                   src={shot.src}
-                  alt={`${project.title} screenshot ${shot.id || idx + 1}`}
+                  alt={`${project.title} screenshot ${shot.id || (idx % totalSlides) + 1}`}
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', borderRadius: 'inherit' }}
                   draggable={false}
                 />
               ) : (
                 <>
                   <div className="project-gallery-card-overlay" />
-                  <div className="project-gallery-card-label">0{shot.id || (idx + 1)}</div>
+                  <div className="project-gallery-card-label">0{shot.id || ((idx % totalSlides) + 1)}</div>
                 </>
               )}
             </div>
