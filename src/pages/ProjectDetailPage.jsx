@@ -196,14 +196,25 @@ export default function ProjectDetailPage() {
                 Gallery coming soon
               </span>
             </div>
-          ) : (
-            project.screenshots.map((shot, idx) => (
-              <div key={idx} className="project-gallery-card" style={{ background: shot.color }}>
-                <div className="project-gallery-card-overlay" />
-                <div className="project-gallery-card-label">0{shot.id || (idx + 1)}</div>
-              </div>
-            ))
-          )}
+          ) : project.screenshots.map((shot, idx) => (
+            <div key={idx} className="project-gallery-card" style={{ background: shot.type === 'image' ? '#111' : shot.color }}>
+              {shot.type === 'image' ? (
+                <img
+                  src={shot.src}
+                  alt={`${project.title} screenshot ${shot.id || idx + 1}`}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', borderRadius: 'inherit' }}
+                  draggable={false}
+                />
+              ) : (
+                <>
+                  <div className="project-gallery-card-overlay" />
+                  <div className="project-gallery-card-label">0{shot.id || (idx + 1)}</div>
+                </>
+              )}
+            </div>
+          ))}
+
+
         </div>
         
         {project.screenshots && project.screenshots.length > 0 && (

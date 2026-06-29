@@ -416,6 +416,47 @@ function Services() {
 }
 
 // ─── Work / Portfolio ─────────────────────────────────────────────
+function ProjectCard({ project }) {
+  const randomShot = useMemo(() => {
+    if (!project.screenshots || project.screenshots.length === 0) return null
+    const idx = Math.floor(Math.random() * project.screenshots.length)
+    return project.screenshots[idx]
+  }, [project.id])
+
+  return (
+    <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+      <div
+        className="portfolio-card-bg"
+        style={{
+          background: project.gradient,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {randomShot?.type === 'image' && (
+          <img
+            src={randomShot.src}
+            alt={project.title}
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: 'cover',
+              transition: 'transform 0.4s ease',
+            }}
+            className="portfolio-card-screenshot"
+            draggable={false}
+          />
+        )}
+      </div>
+      <div className="portfolio-overlay">
+        <div className="portfolio-arrow">→</div>
+        <h3 className="portfolio-title">{project.title}</h3>
+        <span className="portfolio-category">{project.desc}</span>
+      </div>
+    </Link>
+  )
+}
+
 function Work() {
   const [activeFilter, setActiveFilter] = useState('All')
 
@@ -469,17 +510,7 @@ function Work() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
             >
-              <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                <div
-                  className="portfolio-card-bg"
-                  style={{ background: project.gradient }}
-                />
-                <div className="portfolio-overlay">
-                  <div className="portfolio-arrow">→</div>
-                  <h3 className="portfolio-title">{project.title}</h3>
-                  <span className="portfolio-category">{project.desc}</span>
-                </div>
-              </Link>
+              <ProjectCard project={project} />
             </motion.div>
           ))}
         </AnimatePresence>
@@ -496,6 +527,7 @@ function Work() {
     </section>
   )
 }
+
 
 // ─── Process ──────────────────────────────────────────────────────
 function Process() {

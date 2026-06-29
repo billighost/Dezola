@@ -1,10 +1,51 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { PROJECTS } from '../data/projectsData'
 import { Helmet } from 'react-helmet-async'
 
 const FILTER_CATS = ['All', 'Branding', 'Web', 'Motion', 'Marketing']
+
+function ProjectCard({ project }) {
+  const randomShot = useMemo(() => {
+    if (!project.screenshots || project.screenshots.length === 0) return null
+    const idx = Math.floor(Math.random() * project.screenshots.length)
+    return project.screenshots[idx]
+  }, [project.id])
+
+  return (
+    <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}>
+      <div
+        className="portfolio-card-bg"
+        style={{
+          background: project.gradient,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {randomShot?.type === 'image' && (
+          <img
+            src={randomShot.src}
+            alt={project.title}
+            style={{
+              position: 'absolute', inset: 0,
+              width: '100%', height: '100%',
+              objectFit: 'cover',
+              transition: 'transform 0.4s ease',
+            }}
+            className="portfolio-card-screenshot"
+            draggable={false}
+          />
+        )}
+      </div>
+      <div className="portfolio-overlay">
+        <div className="portfolio-arrow">→</div>
+        <h3 className="portfolio-title">{project.title}</h3>
+        <span className="portfolio-category">{project.desc}</span>
+      </div>
+    </Link>
+  )
+}
 
 export default function ProjectsPage() {
   const [activeFilter, setActiveFilter] = useState('All')
@@ -72,17 +113,7 @@ export default function ProjectsPage() {
                 exit={{ opacity: 0, scale: 0.96 }}
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               >
-                <Link to={`/projects/${project.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div
-                    className="portfolio-card-bg"
-                    style={{ background: project.gradient }}
-                  />
-                  <div className="portfolio-overlay">
-                    <div className="portfolio-arrow">→</div>
-                    <h3 className="portfolio-title">{project.title}</h3>
-                    <span className="portfolio-category">{project.desc}</span>
-                  </div>
-                </Link>
+                <ProjectCard project={project} />
               </motion.div>
             ))}
           </AnimatePresence>
