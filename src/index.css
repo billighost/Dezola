@@ -948,7 +948,16 @@ img {
 .testimonials-track {
   display: flex;
   gap: 24px;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  cursor: grab;
+  scrollbar-width: none; /* Firefox */
+}
+
+.testimonials-track::-webkit-scrollbar {
+  display: none; /* Safari and Chrome */
 }
 
 .testimonial-card {
@@ -959,6 +968,7 @@ img {
   flex: 0 0 calc((100% - 48px) / 3);
   position: relative;
   min-width: 0;
+  scroll-snap-align: center;
 }
 
 .testimonial-quote-mark {

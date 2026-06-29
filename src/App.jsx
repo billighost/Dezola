@@ -671,13 +671,95 @@ function About() {
 
 // ─── Testimonials ────────────────────────────────────────────────
 function Testimonials() {
-  const [index, setIndex] = useState(0)
-  const total = TESTIMONIALS.length
-  const visibleCount = 3
-  const maxIndex = Math.max(0, total - visibleCount)
+  const galleryRef = useRef(null)
+  const isDragging = useRef(false)
+  const startX = useRef(0)
+  const scrollLeft = useRef(0)
 
-  const prev = () => setIndex(i => Math.max(0, i - 1))
-  const next = () => setIndex(i => Math.min(maxIndex, i + 1))
+  // Infinite array: triple the items
+  const extendedTestimonials = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS]
+
+  // Start in the middle
+  useEffect(() => {
+    if (galleryRef.current) {
+      const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
+      const gap = 24 // gap from css
+      const oneSetWidth = TESTIMONIALS.length * (cardWidth + gap)
+      galleryRef.current.style.scrollBehavior = 'auto'
+      galleryRef.current.scrollLeft = oneSetWidth
+      
+      requestAnimationFrame(() => {
+        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
+      })
+    }
+  }, [])
+
+  const handleMouseDown = (e) => {
+    isDragging.current = true
+    startX.current = e.pageX - galleryRef.current.offsetLeft
+    scrollLeft.current = galleryRef.current.scrollLeft
+    if (galleryRef.current) {
+      galleryRef.current.style.cursor = 'grabbing'
+      galleryRef.current.style.scrollBehavior = 'auto'
+    }
+  }
+
+  const handleMouseLeave = () => {
+    isDragging.current = false
+    if (galleryRef.current) {
+      galleryRef.current.style.cursor = 'grab'
+      galleryRef.current.style.scrollBehavior = 'smooth'
+    }
+  }
+
+  const handleMouseUp = () => {
+    isDragging.current = false
+    if (galleryRef.current) {
+      galleryRef.current.style.cursor = 'grab'
+      galleryRef.current.style.scrollBehavior = 'smooth'
+    }
+  }
+
+  const handleMouseMove = (e) => {
+    if (!isDragging.current) return
+    e.preventDefault()
+    const x = e.pageX - galleryRef.current.offsetLeft
+    const walk = (x - startX.current) * 1.5
+    if (galleryRef.current) galleryRef.current.scrollLeft = scrollLeft.current - walk
+  }
+
+  const handleScroll = () => {
+    if (!galleryRef.current) return
+    const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
+    if (cardWidth === 0) return
+    const gap = 24
+    const oneSetWidth = TESTIMONIALS.length * (cardWidth + gap)
+    
+    // Seamless loop: if we scroll too far left, jump to middle set
+    if (galleryRef.current.scrollLeft <= (cardWidth / 2)) {
+      galleryRef.current.style.scrollBehavior = 'auto'
+      galleryRef.current.scrollLeft += oneSetWidth
+      requestAnimationFrame(() => {
+        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
+      })
+    } 
+    // If we scroll too far right, jump back to middle set
+    else if (galleryRef.current.scrollLeft >= oneSetWidth * 2 - (cardWidth / 2)) {
+      galleryRef.current.style.scrollBehavior = 'auto'
+      galleryRef.current.scrollLeft -= oneSetWidth
+      requestAnimationFrame(() => {
+        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
+      })
+    }
+  }
+
+  const scrollGallery = (direction) => {
+    if (!galleryRef.current) return
+    const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
+    const gap = 24
+    const scrollAmount = direction === 'next' ? (cardWidth + gap) : -(cardWidth + gap)
+    galleryRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
+  }
 
   return (
     <section className="testimonials-section" id="testimonials">
@@ -706,9 +788,14 @@ function Testimonials() {
         <div className="testimonials-track-wrapper">
           <div
             className="testimonials-track"
-            style={{ transform: `translateX(calc(-${index * (100 / visibleCount)}% - ${index * 8}px))` }}
+            ref={galleryRef}
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            onScroll={handleScroll}
           >
-            {TESTIMONIALS.map((t, i) => (
+            {extendedTestimonials.map((t, i) => (
               <div key={i} className="testimonial-card">
                 <div className="testimonial-quote-mark">"</div>
                 <p className="testimonial-text">{t.text}</p>
@@ -721,10 +808,10 @@ function Testimonials() {
         </div>
 
         <div className="testimonials-nav">
-          <button className="testimonial-nav-btn" onClick={prev} disabled={index === 0} aria-label="Previous">
+          <button className="testimonial-nav-btn" onClick={() => scrollGallery('prev')} aria-label="Previous">
             <HiArrowLeft />
           </button>
-          <button className="testimonial-nav-btn" onClick={next} disabled={index >= maxIndex} aria-label="Next">
+          <button className="testimonial-nav-btn" onClick={() => scrollGallery('next')} aria-label="Next">
             <HiArrowRight />
           </button>
         </div>
