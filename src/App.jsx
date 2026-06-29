@@ -201,6 +201,9 @@ export function Navigation() {
               <a href={`#${id}`} onClick={(e) => { e.preventDefault(); scrollTo(id) }}>{label}</a>
             </li>
           ))}
+          <li>
+            <Link to="/projects">Projects</Link>
+          </li>
         </ul>
 
         <motion.button
@@ -242,12 +245,20 @@ export function Navigation() {
                   key={id}
                   className="mobile-nav-link"
                   variants={linkVariants}
-                  onClick={() => scrollTo(id)}
+                  onClick={(e) => { e.preventDefault(); scrollTo(id); }}
                   href={`#${id}`}
                 >
                   {label}
                 </motion.a>
               ))}
+              <motion.a
+                className="mobile-nav-link"
+                variants={linkVariants}
+                onClick={(e) => { e.preventDefault(); setMenuOpen(false); navigate('/projects'); }}
+                href="/projects"
+              >
+                Projects
+              </motion.a>
               
               <motion.button
                 variants={linkVariants}
@@ -964,15 +975,23 @@ export function Footer() {
       <div className="footer-top">
         <div className="footer-logo">
           <img src="/logo-text-dark.png" alt="Dezola Studio" className="footer-logo-img" />
+          <p className="footer-bio">
+            Explore our curated portfolio of elevated digital experiences and brand transformations.
+          </p>
+          <Link to="/projects" className="footer-projects-link">
+            Check out our works →
+          </Link>
         </div>
-        <div className="footer-tagline">Oyo · Nigeria — Creative Studio</div>
-        <div className="footer-socials">
-          <a href="https://instagram.com/realmarsgale" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
-            <FaInstagram />
-          </a>
-          <a href="https://wa.me/2349048428304" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="WhatsApp">
-            <FaWhatsapp />
-          </a>
+        <div className="footer-right">
+          <div className="footer-tagline">Oyo · Nigeria — Creative Studio</div>
+          <div className="footer-socials">
+            <a href="https://instagram.com/realmarsgale" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
+              <FaInstagram />
+            </a>
+            <a href="https://wa.me/2349048428304" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="WhatsApp">
+              <FaWhatsapp />
+            </a>
+          </div>
         </div>
       </div>
 
