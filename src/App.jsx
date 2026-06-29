@@ -97,6 +97,31 @@ const TESTIMONIALS = [
     text: 'Their motion work for our campaign was on a global level. Clients kept asking who made it. That\'s the Dezola effect.',
     name: 'Bola Adesanya',
     company: 'Marketing Director, Lagos Fashion Week'
+  },
+  {
+    text: 'Partnering with Dezola was the best investment we made this year. Their strategic approach to our digital identity helped us secure major enterprise partnerships.',
+    name: 'Tunde Bakare',
+    company: 'Co-founder, TechNova Solutions'
+  },
+  {
+    text: 'Exceptional attention to detail and a truly seamless process. They understood our vision instantly and elevated it beyond our expectations.',
+    name: 'Chioma Eze',
+    company: 'Creative Director, Ziva Africa'
+  },
+  {
+    text: 'Our online sales have doubled since the relaunch. The Dezola team didn\'t just give us a beautiful e-commerce platform; they gave us a revenue engine.',
+    name: 'Femi Olatunji',
+    company: 'Operations Manager, O-Shop'
+  },
+  {
+    text: 'We needed a brand identity that communicated both luxury and heritage. Dezola nailed it perfectly. Their design work speaks volumes.',
+    name: 'Aisha Bello',
+    company: 'Founder, Muyyaq Store'
+  },
+  {
+    text: 'Professional, innovative, and highly responsive. Dezola Studio delivers exactly what they promise—and then some. Highly recommended for any serious business.',
+    name: 'David Okafor',
+    company: 'Managing Partner, Apex Consulting'
   }
 ]
 
