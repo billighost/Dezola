@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { PROJECTS } from '../data/projectsData'
 import { Helmet } from 'react-helmet-async'
+import './ProjectsPage.css'
 
 const FILTER_CATS = ['All', 'Branding', 'Web', 'Motion', 'Marketing']
 
@@ -27,6 +28,7 @@ function ProjectCard({ project }) {
           <img
             src={randomShot.src}
             alt={project.title}
+            loading="lazy"
             style={{
               position: 'absolute', inset: 0,
               width: '100%', height: '100%',

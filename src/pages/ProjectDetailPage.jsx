@@ -1,9 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { PROJECTS } from '../data/projectsData'
 import { Helmet } from 'react-helmet-async'
 import { HiArrowLeft, HiArrowRight } from 'react-icons/hi'
+import { useInfiniteCarousel } from '../hooks/useInfiniteCarousel'
+import './ProjectDetailPage.css'
 
 export default function ProjectDetailPage() {
   const { id, category } = useParams()
@@ -13,33 +15,37 @@ export default function ProjectDetailPage() {
   const prevProject = currentIndex > 0 ? PROJECTS[currentIndex - 1] : null
   const nextProject = currentIndex >= 0 && currentIndex < PROJECTS.length - 1 ? PROJECTS[currentIndex + 1] : null
 
-
-  const galleryRef = useRef(null)
-  const isDragging = useRef(false)
-  const startX = useRef(0)
-  const scrollLeft = useRef(0)
-  const scrollTimeout = useRef(null)
-  
   const [currentSlide, setCurrentSlide] = useState(1)
   const totalSlides = project?.screenshots?.length || 1
 
   const extendedScreenshots = project?.screenshots ? [...project.screenshots, ...project.screenshots, ...project.screenshots] : []
 
+  const {
+    trackRef: galleryRef,
+    handleScroll: handleCarouselScroll,
+    handleMouseDown,
+    handleMouseLeave,
+    handleMouseUp,
+    handleMouseMove,
+    scrollTo: scrollGallery,
+    getMetrics
+  } = useInfiniteCarousel({ itemCount: totalSlides, gapPx: 16, resetKey: id })
+
   useEffect(() => {
     window.scrollTo(0, 0)
-    
-    if (galleryRef.current && totalSlides > 0) {
-      const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
-      const gap = 16
-      const oneSetWidth = totalSlides * (cardWidth + gap)
-      galleryRef.current.style.scrollBehavior = 'auto'
-      galleryRef.current.scrollLeft = oneSetWidth
-      
-      requestAnimationFrame(() => {
-        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
-      })
-    }
-  }, [id, totalSlides])
+  }, [id])
+
+  const handleScroll = () => {
+    handleCarouselScroll()
+    const track = galleryRef.current
+    if (!track) return
+    const { cardWidth } = getMetrics()
+    if (!cardWidth) return
+    const newIndex = Math.round(track.scrollLeft / cardWidth) + 1
+    let actualIndex = newIndex % totalSlides
+    if (actualIndex === 0) actualIndex = totalSlides
+    setCurrentSlide(actualIndex)
+  }
 
   if (!project) {
     return (
@@ -50,94 +56,6 @@ export default function ProjectDetailPage() {
     )
   }
 
-  const handleMouseDown = (e) => {
-    isDragging.current = true
-    startX.current = e.pageX - galleryRef.current.offsetLeft
-    scrollLeft.current = galleryRef.current.scrollLeft
-    if (galleryRef.current) {
-      galleryRef.current.style.cursor = 'grabbing'
-      galleryRef.current.style.scrollBehavior = 'auto'
-      galleryRef.current.style.scrollSnapType = 'none'
-    }
-  }
-
-  const handleMouseLeave = () => {
-    isDragging.current = false
-    if (galleryRef.current) {
-      galleryRef.current.style.cursor = 'grab'
-      galleryRef.current.style.scrollBehavior = 'smooth'
-      galleryRef.current.style.scrollSnapType = 'x mandatory'
-    }
-  }
-
-  const handleMouseUp = () => {
-    isDragging.current = false
-    if (galleryRef.current) {
-      galleryRef.current.style.cursor = 'grab'
-      galleryRef.current.style.scrollBehavior = 'smooth'
-      galleryRef.current.style.scrollSnapType = 'x mandatory'
-    }
-  }
-
-  const handleMouseMove = (e) => {
-    if (!isDragging.current) return
-    e.preventDefault()
-    const x = e.pageX - galleryRef.current.offsetLeft
-    const walk = (x - startX.current) * 1.5
-    if (galleryRef.current) galleryRef.current.scrollLeft = scrollLeft.current - walk
-  }
-  
-  const handleScroll = () => {
-    if (!galleryRef.current) return
-    const scrollPos = galleryRef.current.scrollLeft
-    const cardWidth = galleryRef.current.children[0]?.offsetWidth || 1
-    const newIndex = Math.round(scrollPos / cardWidth) + 1
-    
-    let actualIndex = newIndex % totalSlides
-    if (actualIndex === 0) actualIndex = totalSlides
-    setCurrentSlide(actualIndex)
-
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
-    
-    scrollTimeout.current = setTimeout(() => {
-      if (!galleryRef.current) return
-      
-      const gap = 16
-      const oneSetWidth = totalSlides * (cardWidth + gap)
-      
-      if (galleryRef.current.scrollLeft <= cardWidth) {
-        galleryRef.current.style.scrollSnapType = 'none'
-        galleryRef.current.style.scrollBehavior = 'auto'
-        galleryRef.current.scrollLeft += oneSetWidth
-        
-        setTimeout(() => {
-          if (galleryRef.current) {
-            galleryRef.current.style.scrollBehavior = 'smooth'
-            galleryRef.current.style.scrollSnapType = 'x mandatory'
-          }
-        }, 50)
-      } else if (galleryRef.current.scrollLeft >= oneSetWidth * 2 - cardWidth) {
-        galleryRef.current.style.scrollSnapType = 'none'
-        galleryRef.current.style.scrollBehavior = 'auto'
-        galleryRef.current.scrollLeft -= oneSetWidth
-        
-        setTimeout(() => {
-          if (galleryRef.current) {
-            galleryRef.current.style.scrollBehavior = 'smooth'
-            galleryRef.current.style.scrollSnapType = 'x mandatory'
-          }
-        }, 50)
-      }
-    }, 150)
-  }
-  
-  const scrollGallery = (direction) => {
-    if (!galleryRef.current) return
-    const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
-    const scrollAmount = direction === 'next' ? (cardWidth + 16) : -(cardWidth + 16)
-    galleryRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
-  }
-  
   const clientName = project.title.includes(' — ') ? project.title.split(' — ')[0] : project.title
 
   return (
@@ -236,26 +154,34 @@ export default function ProjectDetailPage() {
 
       {/* Section B.5 — Deliverables */}
       {project.deliverables && project.deliverables.length > 0 && (
-        <motion.div 
+        <motion.div
           className="project-deliverables-section"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          style={{ maxWidth: 1280, margin: '0 auto', padding: '80px 5%', borderTop: '1px solid rgba(200, 169, 126, 0.2)' }}
         >
           <div className="gold-accent-line" />
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', marginBottom: '24px' }}>
-            What we delivered for {project.category}
-          </h2>
-          <p style={{ fontSize: '18px', opacity: 0.8, marginBottom: '32px', maxWidth: '800px' }}>
-            For this engagement, our team focused on providing top-tier {project.category.toLowerCase()} services to ensure {clientName} achieved their business goals. Here are the key deliverables we provided:
+          <h2 className="project-deliverables-heading">Deliverables</h2>
+          <p className="project-deliverables-subtext">
+            For this engagement, our team focused on providing top-tier {project.category.toLowerCase()} services to ensure {clientName} achieved their business goals. Here's what we delivered.
           </p>
-          <ul style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', listStyle: 'none', padding: 0 }}>
+          <ul className="deliverables-grid">
             {project.deliverables.map((item, i) => (
-              <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '18px', background: 'rgba(255,255,255,0.03)', padding: '20px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <span style={{ color: 'var(--gold)' }}>✓</span> {item}
-              </li>
+              <motion.li
+                key={i}
+                className="deliverable-card"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.06, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <div className="deliverable-card-top">
+                  <span className="deliverable-num">{String(i + 1).padStart(2, '0')}</span>
+                  <span className="deliverable-check">✓</span>
+                </div>
+                <span className="deliverable-text">{item}</span>
+              </motion.li>
             ))}
           </ul>
         </motion.div>
@@ -293,6 +219,7 @@ export default function ProjectDetailPage() {
                 <img
                   src={shot.src}
                   alt={`${project.title} screenshot ${shot.id || (idx % totalSlides) + 1}`}
+                  loading="lazy"
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', borderRadius: 'inherit' }}
                   draggable={false}
                 />

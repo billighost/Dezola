@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import { PROJECTS } from './data/projectsData.js'
-import ProjectsPage from './pages/ProjectsPage.jsx'
-import ProjectDetailPage from './pages/ProjectDetailPage.jsx'
+import { SERVICES } from './data/servicesData.js'
+import { useInfiniteCarousel } from './hooks/useInfiniteCarousel.js'
 import {
   FiMail, FiPhone
 } from 'react-icons/fi'
@@ -15,6 +15,12 @@ import {
   HiArrowLeft, HiArrowRight
 } from 'react-icons/hi'
 import { FiChevronDown } from 'react-icons/fi'
+
+// Route-level code splitting — these pages aren't needed for the initial
+// homepage bundle, so they're loaded on demand (Section 11).
+const ProjectsPage = lazy(() => import('./pages/ProjectsPage.jsx'))
+const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage.jsx'))
+const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage.jsx'))
 
 // ─── Animation Variants ───────────────────────────────────────────────
 const fadeUp = {
@@ -33,45 +39,7 @@ const slideIn = {
 }
 
 // ─── Data ────────────────────────────────────────────────────────────
-
-const SERVICES = [
-  {
-    num: '01',
-    name: 'Branding & Identity',
-    desc: 'We build visual identities that command attention and tell your story before you say a word.',
-    tags: ['Logo Design', 'Brand Guidelines', 'Visual Identity']
-  },
-  {
-    num: '02',
-    name: 'Graphic Design',
-    desc: 'Print, digital, illustration — visual communication that stops the scroll and holds the gaze.',
-    tags: ['Print Design', 'Illustration', 'Visual Comms']
-  },
-  {
-    num: '03',
-    name: 'Web & UI/UX Design',
-    desc: 'Websites and interfaces that look stunning, load fast, and convert visitors into clients.',
-    tags: ['Wireframes', 'Prototypes', 'Design Systems']
-  },
-  {
-    num: '04',
-    name: 'Digital Marketing',
-    desc: 'Data-driven campaigns that reach the right people at the right moment on the right platform.',
-    tags: ['Social Media', 'Campaigns', 'Content Strategy']
-  },
-  {
-    num: '05',
-    name: 'Motion & Animation',
-    desc: 'Movement that breathes life into your brand — from micro-interactions to full motion campaigns.',
-    tags: ['After Effects', 'Lottie', 'Motion Graphics']
-  },
-  {
-    num: '06',
-    name: 'SEO & Analytics',
-    desc: 'We make sure your audience can find you, and we give you the data to grow smarter.',
-    tags: ['On-Page SEO', 'Technical SEO', 'Local SEO']
-  }
-]
+// SERVICES imported from data/servicesData.js
 
 // PROJECTS imported from data
 
@@ -255,46 +223,51 @@ export function Navigation() {
             animate="visible"
             exit="exit"
           >
-            <button className="mobile-overlay-close" onClick={() => setMenuOpen(false)}>×</button>
-            <div className="mobile-overlay-logo">
-              <img src="/logo-text.png" alt="Dezola Studio" className="mobile-overlay-logo-img" />
+            <div className="mobile-overlay-header">
+              <div className="mobile-overlay-logo">
+                <img src="/logo-text-dark.png" alt="Dezola Studio" className="mobile-overlay-logo-img" />
+              </div>
+              <button className="mobile-overlay-close" onClick={() => setMenuOpen(false)} aria-label="Close menu">×</button>
             </div>
-            <motion.div
-              variants={{ visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } } }}
-              initial="hidden"
-              animate="visible"
-              style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}
-            >
-              {[['work', 'Work'], ['services', 'Services'], ['about', 'About'], ['contact', 'Contact']].map(([id, label]) => (
+
+            <div className="mobile-overlay-body">
+              <motion.div
+                variants={{ visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } } }}
+                initial="hidden"
+                animate="visible"
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}
+              >
+                {[['work', 'Work'], ['services', 'Services'], ['about', 'About'], ['contact', 'Contact']].map(([id, label]) => (
+                  <motion.a
+                    key={id}
+                    className="mobile-nav-link"
+                    variants={linkVariants}
+                    onClick={(e) => { e.preventDefault(); scrollTo(id); }}
+                    href={`#${id}`}
+                  >
+                    {label}
+                  </motion.a>
+                ))}
                 <motion.a
-                  key={id}
                   className="mobile-nav-link"
                   variants={linkVariants}
-                  onClick={(e) => { e.preventDefault(); scrollTo(id); }}
-                  href={`#${id}`}
+                  onClick={(e) => { e.preventDefault(); setMenuOpen(false); navigate('/projects'); }}
+                  href="/projects"
                 >
-                  {label}
+                  Projects
                 </motion.a>
-              ))}
-              <motion.a
-                className="mobile-nav-link"
-                variants={linkVariants}
-                onClick={(e) => { e.preventDefault(); setMenuOpen(false); navigate('/projects'); }}
-                href="/projects"
-              >
-                Projects
-              </motion.a>
-              
-              <motion.button
-                variants={linkVariants}
-                className="btn-primary-inv mobile-nav-btn"
-                onClick={() => scrollTo('contact')}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Start a project
-              </motion.button>
-            </motion.div>
+
+                <motion.button
+                  variants={linkVariants}
+                  className="btn-primary-inv mobile-nav-btn"
+                  onClick={() => scrollTo('contact')}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Start a project
+                </motion.button>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -364,7 +337,7 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.6 }}
           >
-            A full-service creative studio in Lagos — branding, web design, motion, and digital marketing for brands that refuse to blend in.
+            A full-service creative studio in Oyo — branding, web design, motion, and digital marketing for brands that refuse to blend in.
           </motion.p>
 
           <motion.div
@@ -382,9 +355,15 @@ function Hero() {
           </motion.div>
         </div>
 
-        <div className="hero-watermark" aria-hidden="true">
+        <motion.div
+          className="hero-watermark"
+          aria-hidden="true"
+          initial={{ opacity: 0, x: 120 }}
+          animate={{ opacity: 0.035, x: 0 }}
+          transition={{ type: 'spring', stiffness: 60, damping: 14, mass: 1, delay: 0.4 }}
+        >
           DEZOLA
-        </div>
+        </motion.div>
       </div>
 
       {/* Marquee */}
@@ -435,15 +414,18 @@ function Services() {
         viewport={{ once: true, margin: '-80px' }}
       >
         {SERVICES.map((svc) => (
-          <motion.div key={svc.num} className="service-card" variants={fadeUp}>
-            <span className="service-number">{svc.num}</span>
-            <h3 className="service-name">{svc.name}</h3>
-            <p className="service-desc">{svc.desc}</p>
-            <div className="service-tags">
-              {svc.tags.map((tag) => (
-                <span key={tag} className="service-tag">{tag}</span>
-              ))}
-            </div>
+          <motion.div key={svc.num} variants={fadeUp} style={{ height: '100%' }}>
+            <Link to={`/services/${svc.slug}`} className="service-card">
+              <span className="service-number">{svc.num}</span>
+              <h3 className="service-name">{svc.name}</h3>
+              <p className="service-desc">{svc.desc}</p>
+              <div className="service-tags">
+                {svc.tags.map((tag) => (
+                  <span key={tag} className="service-tag">{tag}</span>
+                ))}
+              </div>
+              <span className="service-card-learn-more">Learn more →</span>
+            </Link>
           </motion.div>
         ))}
       </motion.div>
@@ -473,6 +455,7 @@ function ProjectCard({ project }) {
           <img
             src={randomShot.src}
             alt={project.title}
+            loading="lazy"
             style={{
               position: 'absolute', inset: 0,
               width: '100%', height: '100%',
@@ -496,7 +479,11 @@ function ProjectCard({ project }) {
 function Work() {
   const [activeFilter, setActiveFilter] = useState('All')
 
-  const filtered = PROJECTS.filter(p => activeFilter === 'All' || p.category === activeFilter)
+  // "All" shows only the 6 curated featured projects; any specific category
+  // filter shows every matching project, uncapped (item 3).
+  const filtered = activeFilter === 'All'
+    ? PROJECTS.filter(p => p.featured)
+    : PROJECTS.filter(p => p.category === activeFilter)
 
   return (
     <section className="work-section dot-grid" id="work">
@@ -543,8 +530,6 @@ function Work() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
             >
               <ProjectCard project={project} />
             </motion.div>
@@ -634,7 +619,7 @@ function About() {
           <h2 className="about-heading">About Dezola</h2>
           <div className="about-body">
             <p>
-              Dezola Studio is a Lagos-based creative agency built for businesses that take their brand seriously.
+              Dezola Studio is an Oyo-based creative agency built for businesses that take their brand seriously.
             </p>
             <p>
               We combine strategy, design, and technology to build brands, websites, and digital experiences that compete at the highest level — locally and globally.
@@ -671,117 +656,18 @@ function About() {
 
 // ─── Testimonials ────────────────────────────────────────────────
 function Testimonials() {
-  const galleryRef = useRef(null)
-  const isDragging = useRef(false)
-  const startX = useRef(0)
-  const scrollLeft = useRef(0)
-
-  const scrollTimeout = useRef(null)
+  const {
+    trackRef,
+    handleScroll,
+    handleMouseDown,
+    handleMouseLeave,
+    handleMouseUp,
+    handleMouseMove,
+    scrollTo
+  } = useInfiniteCarousel({ itemCount: TESTIMONIALS.length, gapPx: 24 })
 
   // Infinite array: triple the items
   const extendedTestimonials = [...TESTIMONIALS, ...TESTIMONIALS, ...TESTIMONIALS]
-
-  // Start in the middle
-  useEffect(() => {
-    if (galleryRef.current) {
-      const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
-      const gap = 24 // gap from css
-      const oneSetWidth = TESTIMONIALS.length * (cardWidth + gap)
-      galleryRef.current.style.scrollBehavior = 'auto'
-      galleryRef.current.scrollLeft = oneSetWidth
-      
-      requestAnimationFrame(() => {
-        if (galleryRef.current) galleryRef.current.style.scrollBehavior = 'smooth'
-      })
-    }
-  }, [])
-
-  const handleMouseDown = (e) => {
-    isDragging.current = true
-    startX.current = e.pageX - galleryRef.current.offsetLeft
-    scrollLeft.current = galleryRef.current.scrollLeft
-    if (galleryRef.current) {
-      galleryRef.current.style.cursor = 'grabbing'
-      galleryRef.current.style.scrollBehavior = 'auto'
-      galleryRef.current.style.scrollSnapType = 'none'
-    }
-  }
-
-  const handleMouseLeave = () => {
-    isDragging.current = false
-    if (galleryRef.current) {
-      galleryRef.current.style.cursor = 'grab'
-      galleryRef.current.style.scrollBehavior = 'smooth'
-      galleryRef.current.style.scrollSnapType = 'x mandatory'
-    }
-  }
-
-  const handleMouseUp = () => {
-    isDragging.current = false
-    if (galleryRef.current) {
-      galleryRef.current.style.cursor = 'grab'
-      galleryRef.current.style.scrollBehavior = 'smooth'
-      galleryRef.current.style.scrollSnapType = 'x mandatory'
-    }
-  }
-
-  const handleMouseMove = (e) => {
-    if (!isDragging.current) return
-    e.preventDefault()
-    const x = e.pageX - galleryRef.current.offsetLeft
-    const walk = (x - startX.current) * 1.5
-    if (galleryRef.current) galleryRef.current.scrollLeft = scrollLeft.current - walk
-  }
-
-  const handleScroll = () => {
-    if (!galleryRef.current) return
-    
-    if (scrollTimeout.current) clearTimeout(scrollTimeout.current)
-    
-    scrollTimeout.current = setTimeout(() => {
-      if (!galleryRef.current) return
-      
-      const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
-      if (cardWidth === 0) return
-      const gap = 24
-      const oneSetWidth = TESTIMONIALS.length * (cardWidth + gap)
-      
-      // Seamless loop: if we scroll too far left, jump to middle set silently
-      if (galleryRef.current.scrollLeft <= cardWidth) {
-        galleryRef.current.style.scrollSnapType = 'none'
-        galleryRef.current.style.scrollBehavior = 'auto'
-        galleryRef.current.scrollLeft += oneSetWidth
-        
-        setTimeout(() => {
-          if (galleryRef.current) {
-            galleryRef.current.style.scrollBehavior = 'smooth'
-            galleryRef.current.style.scrollSnapType = 'x mandatory'
-          }
-        }, 50)
-      } 
-      // If we scroll too far right, jump back to middle set silently
-      else if (galleryRef.current.scrollLeft >= oneSetWidth * 2 - cardWidth) {
-        galleryRef.current.style.scrollSnapType = 'none'
-        galleryRef.current.style.scrollBehavior = 'auto'
-        galleryRef.current.scrollLeft -= oneSetWidth
-        
-        setTimeout(() => {
-          if (galleryRef.current) {
-            galleryRef.current.style.scrollBehavior = 'smooth'
-            galleryRef.current.style.scrollSnapType = 'x mandatory'
-          }
-        }, 50)
-      }
-    }, 150)
-  }
-
-  const scrollGallery = (direction) => {
-    if (!galleryRef.current) return
-    const cardWidth = galleryRef.current.children[0]?.offsetWidth || 0
-    const gap = 24
-    const scrollAmount = direction === 'next' ? (cardWidth + gap) : -(cardWidth + gap)
-    galleryRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' })
-  }
 
   return (
     <section className="testimonials-section" id="testimonials">
@@ -810,7 +696,7 @@ function Testimonials() {
         <div className="testimonials-track-wrapper">
           <div
             className="testimonials-track"
-            ref={galleryRef}
+            ref={trackRef}
             onMouseDown={handleMouseDown}
             onMouseLeave={handleMouseLeave}
             onMouseUp={handleMouseUp}
@@ -830,10 +716,10 @@ function Testimonials() {
         </div>
 
         <div className="testimonials-nav">
-          <button className="testimonial-nav-btn" onClick={() => scrollGallery('prev')} aria-label="Previous">
+          <button className="testimonial-nav-btn" onClick={() => scrollTo('prev')} aria-label="Previous">
             <HiArrowLeft />
           </button>
-          <button className="testimonial-nav-btn" onClick={() => scrollGallery('next')} aria-label="Next">
+          <button className="testimonial-nav-btn" onClick={() => scrollTo('next')} aria-label="Next">
             <HiArrowRight />
           </button>
         </div>
@@ -1185,11 +1071,14 @@ export default function App() {
     <div className="page-wrapper">
       <CustomCursor />
       <Navigation />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/project/:id/:category" element={<ProjectDetailPage />} />
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/projects" element={<ProjectsPage />} />
+          <Route path="/project/:id/:category" element={<ProjectDetailPage />} />
+          <Route path="/services/:slug" element={<ServiceDetailPage />} />
+        </Routes>
+      </Suspense>
       <Contact />
       <Footer />
     </div>
