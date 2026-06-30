@@ -1572,9 +1572,15 @@ img {
   .hero-buttons {
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     width: 100%;
     gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .hero-buttons .btn-outline {
+    position: relative;
+    top: 18px;
   }
 
   .services-section { padding: 80px 24px; }
