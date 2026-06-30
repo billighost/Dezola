@@ -292,7 +292,7 @@ function Hero() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
           >
-            [ Oyo, Nigeria — Est. 2024 ]
+            [ Ibadan, Nigeria — Est. 2024 ]
           </motion.span>
 
           <motion.div
@@ -339,7 +339,7 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.4, duration: 0.6 }}
           >
-            A full-service creative studio in Oyo — branding, web design, motion, and digital marketing for brands that refuse to blend in.
+            A full-service creative studio in Ibadan — branding, web design, motion, and digital marketing for brands that refuse to blend in.
           </motion.p>
 
           <motion.div
@@ -621,7 +621,7 @@ function About() {
           <h2 className="about-heading">About Dezola</h2>
           <div className="about-body">
             <p>
-              Dezola Studio is an Oyo-based creative agency built for businesses that take their brand seriously.
+              Dezola Studio is an Ibadan-based creative agency built for businesses that take their brand seriously.
             </p>
             <p>
               We combine strategy, design, and technology to build brands, websites, and digital experiences that compete at the highest level — locally and globally.
@@ -1005,7 +1005,7 @@ export function Footer() {
           </Link>
         </div>
         <div className="footer-right">
-          <div className="footer-tagline">Oyo · Nigeria — Creative Studio</div>
+          <div className="footer-tagline">Ibadan · Nigeria — Creative Studio</div>
           <div className="footer-socials">
             <a href="https://instagram.com/realmarsgale" target="_blank" rel="noopener noreferrer" className="footer-social-link" aria-label="Instagram">
               <FaInstagram />
@@ -1050,10 +1050,10 @@ function Home() {
   return (
     <>
       <SEO
-        title="Dezola Studio — Creative Agency in Oyo, Nigeria"
+        title="Dezola Studio — Creative Agency in Ibadan, Nigeria"
         canonicalPath={location.pathname}
-        description="Dezola Studio is a full-service creative agency in Oyo, Nigeria. We offer branding, web design, motion graphics, digital marketing, and SEO."
-        keywords="creative agency Oyo, branding Nigeria, web design Oyo, UI UX design Nigeria, digital marketing Nigeria"
+        description="Dezola Studio is a full-service creative agency in Ibadan, Nigeria. We offer branding, web design, motion graphics, digital marketing, and SEO."
+        keywords="creative agency Ibadan, branding Nigeria, web design Ibadan, UI UX design Nigeria, digital marketing Nigeria"
       />
       <Hero />
       <Services />

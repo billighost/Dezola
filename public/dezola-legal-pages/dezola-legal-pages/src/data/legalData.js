@@ -11,14 +11,14 @@ export const TERMS_CONTENT = {
   titleEm: 'Conditions',
   subtitle: 'The agreement that governs every project, proposal, and engagement between Dezola Studio and our clients.',
   effectiveDate: '1 July 2026',
-  meta: 'Client Service Agreement — Oyo, Nigeria',
+  meta: 'Client Service Agreement — Ibadan, Nigeria',
   sections: [
     {
       id: 'introduction',
       num: '01',
       title: 'Introduction & Acceptance',
       paragraphs: [
-        'These Terms & Conditions ("Terms") govern every project, proposal, and engagement between Dezola Studio ("Dezola," "we," "us") and the client commissioning work ("Client," "you"), based in Oyo, Nigeria. By approving a written proposal, paying a deposit, or instructing Dezola to begin work, the Client confirms they have read, understood, and agreed to these Terms in full.',
+        'These Terms & Conditions ("Terms") govern every project, proposal, and engagement between Dezola Studio ("Dezola," "we," "us") and the client commissioning work ("Client," "you"), based in Ibadan, Nigeria. By approving a written proposal, paying a deposit, or instructing Dezola to begin work, the Client confirms they have read, understood, and agreed to these Terms in full.',
         'Where a signed proposal or scope-of-work document conflicts with these Terms, the signed proposal takes precedence only for the specific point in conflict — all other clauses here still apply.'
       ]
     },
@@ -209,7 +209,7 @@ export const TERMS_CONTENT = {
       num: '15',
       title: 'Contact',
       paragraphs: [
-        'Questions about these Terms can be directed to Dezola Studio at bb2010ng@gmail.com or +234 904 842 8304. We\u2019re based in Oyo, Nigeria and respond to enquiries within 24 hours.'
+        'Questions about these Terms can be directed to Dezola Studio at bb2010ng@gmail.com or +234 904 842 8304. We\u2019re based in Ibadan, Nigeria and respond to enquiries within 24 hours.'
       ]
     }
   ],
@@ -224,7 +224,7 @@ export const PRIVACY_CONTENT = {
   titleEm: 'Policy',
   subtitle: 'How Dezola Studio collects, uses, and protects the information shared with us by clients and website visitors.',
   effectiveDate: '1 July 2026',
-  meta: 'Data & Privacy Notice — Oyo, Nigeria',
+  meta: 'Data & Privacy Notice — Ibadan, Nigeria',
   sections: [
     {
       id: 'introduction',
@@ -355,7 +355,7 @@ export const PRIVACY_CONTENT = {
       num: '14',
       title: 'Contact',
       paragraphs: [
-        'Questions about this Privacy Policy or requests regarding your personal information can be directed to Dezola Studio at bb2010ng@gmail.com or +234 904 842 8304. We\u2019re based in Oyo, Nigeria and respond to enquiries within 24 hours.'
+        'Questions about this Privacy Policy or requests regarding your personal information can be directed to Dezola Studio at bb2010ng@gmail.com or +234 904 842 8304. We\u2019re based in Ibadan, Nigeria and respond to enquiries within 24 hours.'
       ]
     }
   ],

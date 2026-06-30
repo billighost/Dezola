@@ -102,7 +102,7 @@ function drawCoverPage(doc, content) {
 
   setText(doc, [150, 145, 135])
   doc.setFontSize(8.5)
-  doc.text('Oyo, Nigeria — Creative Studio', MARGIN_X, PAGE_H - 28)
+  doc.text('Ibadan, Nigeria — Creative Studio', MARGIN_X, PAGE_H - 28)
   doc.text('dezolastudio.name.ng  ·  bb2010ng@gmail.com', MARGIN_X, PAGE_H - 23)
 }
 
