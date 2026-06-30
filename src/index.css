@@ -376,6 +376,8 @@ img {
 .mobile-nav-link {
   font-family: var(--font-display);
   font-size: 48px;
+  /* Prevent body's 1.75 line-height from bloating each link's hit-box height */
+  line-height: 1.15;
   color: var(--cream);
   font-weight: 400;
   letter-spacing: -0.02em;
@@ -388,7 +390,7 @@ img {
 }
 
 .mobile-nav-btn {
-  margin-top: 32px;
+  margin-top: 20px;
   font-size: 16px;
   padding: 16px 40px;
 }
@@ -408,12 +410,19 @@ img {
 /* Mobile overlay scrollable body */
 .mobile-overlay-body {
   flex: 1;
+  /* min-height: 0 lets the flex item honour its overflow rather than growing to fit */
+  min-height: 0;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 40px 24px;
+  /* flex-start (not center) ensures content starts below the header, never above it.
+     justify-content:center with overflow clips the top — the scrollport starts at
+     the middle of the overflowed content, making the first link unreachable on
+     short/landscape viewports. */
+  justify-content: flex-start;
+  /* Viewport-height-aware padding: generous on tall screens, compact on short ones */
+  padding: clamp(24px, 6vh, 56px) 24px clamp(20px, 4vh, 44px);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
 }
@@ -1559,6 +1568,52 @@ img {
   .portfolio-grid { grid-template-columns: 1fr; }
   .hero-headline { font-size: clamp(36px, 10vw, 52px); }
   .filter-tabs { gap: 20px; }
+}
+
+/* ===== RESPONSIVE — MOBILE OVERLAY (HEIGHT) =====
+   Handles landscape phones and any viewport shorter than ~600 px.
+   Width breakpoints already hide the desktop nav; these height breakpoints
+   scale down the large Playfair link text so the overlay never needs to
+   scroll on landscape iPhones/Androids (and scrolls gracefully if it does). */
+
+/* Landscape phone / short tablet (e.g. iPhone SE landscape: 375 px tall) */
+@media (max-height: 620px) {
+  .mobile-overlay-header {
+    height: 64px;
+  }
+  .mobile-overlay-body {
+    padding: clamp(16px, 3vh, 28px) 24px clamp(16px, 2vh, 24px);
+  }
+  .mobile-nav-link {
+    font-size: 36px;
+  }
+  .mobile-nav-btn {
+    margin-top: 16px;
+    padding: 13px 32px;
+    font-size: 13px;
+  }
+}
+
+/* Very short viewport (e.g. Galaxy Fold landscape or browser toolbar visible) */
+@media (max-height: 460px) {
+  .mobile-overlay-header {
+    height: 52px;
+  }
+  .mobile-overlay-body {
+    padding: 12px 24px 16px;
+  }
+  .mobile-nav-link {
+    font-size: 26px;
+    line-height: 1.1;
+  }
+  .mobile-nav-btn {
+    margin-top: 10px;
+    padding: 11px 24px;
+    font-size: 12px;
+  }
+  .mobile-overlay-logo-img {
+    height: 24px;
+  }
 }
 
 .custom-select {

@@ -235,7 +235,7 @@ export function Navigation() {
                 variants={{ visible: { transition: { staggerChildren: 0.08, delayChildren: 0.2 } } }}
                 initial="hidden"
                 animate="visible"
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}
               >
                 {[['work', 'Work'], ['services', 'Services'], ['about', 'About'], ['contact', 'Contact']].map(([id, label]) => (
                   <motion.a
