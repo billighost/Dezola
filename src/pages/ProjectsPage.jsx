@@ -122,6 +122,17 @@ export default function ProjectsPage() {
           </AnimatePresence>
         </motion.div>
 
+        {/* Legal footnote */}
+        <div className="projects-legal-note">
+          <p className="projects-legal-text">
+            Curious how we work? See our process, terms, and how we protect your information.
+          </p>
+          <div className="projects-legal-links">
+            <Link to="/terms" className="projects-legal-link">Terms &amp; Conditions</Link>
+            <Link to="/privacy" className="projects-legal-link">Privacy Policy</Link>
+          </div>
+        </div>
+
         {/* View all / Back to Home CTA */}
         <Link to="/#work" className="view-all-link">
           Back to Home

@@ -77,6 +77,46 @@
   }
 }
 
+/* ===== LEGAL NOTE ===== */
+.projects-legal-note {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(13, 13, 13, 0.1);
+  text-align: center;
+}
+
+.projects-legal-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--slate);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.projects-legal-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.projects-legal-link {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  cursor: none;
+  transition: border-color 0.3s;
+}
+
+.projects-legal-link:hover {
+  border-bottom-color: var(--gold);
+}
+
 @media (max-width: 480px) {
   .projects-page-title { font-size: clamp(36px, 11vw, 52px); }
 }

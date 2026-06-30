@@ -323,6 +323,47 @@
   }
 }
 
+/* ===== LEGAL NOTE ===== */
+.projects-legal-note {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 60px 5% 80px;
+  text-align: center;
+  border-top: 1px solid rgba(200, 169, 126, 0.1);
+}
+
+.projects-legal-text {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: rgba(245, 240, 232, 0.6);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.projects-legal-links {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.projects-legal-link {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  cursor: none;
+  transition: border-color 0.3s;
+}
+
+.projects-legal-link:hover {
+  border-bottom-color: var(--gold);
+}
+
 @media (max-width: 480px) {
   .project-hero-title { font-size: clamp(32px, 9vw, 52px); }
 }

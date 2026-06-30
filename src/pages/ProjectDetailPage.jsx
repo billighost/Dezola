@@ -303,6 +303,17 @@ export default function ProjectDetailPage() {
           <span className="project-nav-title">{nextProject?.title || 'None'}</span>
         </Link>
       </motion.div>
+
+      {/* Legal footnote */}
+      <div className="projects-legal-note">
+        <p className="projects-legal-text">
+          Curious how we work? See our process, terms, and how we protect your information.
+        </p>
+        <div className="projects-legal-links">
+          <Link to="/terms" className="projects-legal-link">Terms &amp; Conditions</Link>
+          <Link to="/privacy" className="projects-legal-link">Privacy Policy</Link>
+        </div>
+      </div>
     </div>
   )
 }
