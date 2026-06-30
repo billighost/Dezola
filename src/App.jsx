@@ -21,6 +21,8 @@ import { FiChevronDown } from 'react-icons/fi'
 const ProjectsPage = lazy(() => import('./pages/ProjectsPage.jsx'))
 const ProjectDetailPage = lazy(() => import('./pages/ProjectDetailPage.jsx'))
 const ServiceDetailPage = lazy(() => import('./pages/ServiceDetailPage.jsx'))
+const TermsPage = lazy(() => import('./pages/TermsPage.jsx'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage.jsx'))
 
 // ─── Animation Variants ───────────────────────────────────────────────
 const fadeUp = {
@@ -1019,6 +1021,10 @@ export function Footer() {
 
       <div className="footer-bottom">
         <p className="footer-copy">© {year} Dezola Studio. All rights reserved.</p>
+        <div className="footer-legal-links" style={{ display: 'flex', gap: 20, justifyContent: 'center' }}>
+          <Link to="/terms" className="footer-credit" style={{ fontStyle: 'normal' }}>Terms &amp; Conditions</Link>
+          <Link to="/privacy" className="footer-credit" style={{ fontStyle: 'normal' }}>Privacy Policy</Link>
+        </div>
         <p className="footer-credit">Designed &amp; built by Dezola Studio</p>
       </div>
     </footer>
@@ -1071,6 +1077,8 @@ export default function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/project/:id/:category" element={<ProjectDetailPage />} />
           <Route path="/services/:slug" element={<ServiceDetailPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
         </Routes>
       </Suspense>
       <Contact />
