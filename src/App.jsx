@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import SEO from './components/SEO'
 import { Routes, Route, Link, useNavigate, useLocation } from 'react-router-dom'
 import { PROJECTS } from './data/projectsData.js'
 import { SERVICES } from './data/servicesData.js'
@@ -1043,18 +1043,12 @@ function Home() {
 
   return (
     <>
-      <Helmet>
-        <title>Dezola Studio — Creative Agency in Oyo, Nigeria</title>
-        <meta name="description" content="Dezola Studio is a full-service creative agency in Oyo, Nigeria. We offer branding, web design, motion graphics, digital marketing, and SEO." />
-        <meta name="keywords" content="creative agency Oyo, branding Nigeria, web design Oyo, UI UX design Nigeria, digital marketing Nigeria" />
-        <meta property="og:title" content="Dezola Studio — Creative Agency Oyo, Nigeria" />
-        <meta property="og:description" content="Premium branding, web design, and digital marketing for Nigerian businesses." />
-        <meta property="og:image" content="/og-image.png" />
-        <meta property="og:image:width" content="1200" />
-        <meta property="og:image:height" content="630" />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="/og-image.png" />
-      </Helmet>
+      <SEO
+        title="Dezola Studio — Creative Agency in Oyo, Nigeria"
+        canonicalPath={location.pathname}
+        description="Dezola Studio is a full-service creative agency in Oyo, Nigeria. We offer branding, web design, motion graphics, digital marketing, and SEO."
+        keywords="creative agency Oyo, branding Nigeria, web design Oyo, UI UX design Nigeria, digital marketing Nigeria"
+      />
       <Hero />
       <Services />
       <Work />

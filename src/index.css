@@ -739,6 +739,43 @@ img {
   font-weight: 400;
 }
 
+.deliverable-title {
+  font-family: var(--font-body);
+  font-size: 16px;
+  color: var(--cream);
+  line-height: 1.4;
+  font-weight: 600;
+}
+
+.deliverable-desc {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: rgba(245, 240, 232, 0.6);
+  line-height: 1.65;
+  font-weight: 300;
+}
+
+.deliverable-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 8px;
+}
+
+.deliverable-tech-pill {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  background: rgba(200, 169, 126, 0.08);
+  border: 1px solid rgba(200, 169, 126, 0.25);
+  border-radius: 0;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
   .project-deliverables-section {
     padding: 60px 5%;

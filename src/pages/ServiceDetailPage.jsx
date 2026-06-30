@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import { HiArrowLeft, HiArrowRight } from 'react-icons/hi'
 import { SERVICES } from '../data/servicesData'
 import { PROJECTS } from '../data/projectsData'
@@ -55,10 +55,11 @@ export default function ServiceDetailPage() {
 
   return (
     <div className="service-detail-page">
-      <Helmet>
-        <title>{service.name} Services — Dezola Studio</title>
-        <meta name="description" content={service.fullDesc} />
-      </Helmet>
+      <SEO
+        title={`${service.name} Services`}
+        description={service.fullDesc}
+        canonicalPath={`/services/${slug}`}
+      />
 
       {/* Back Navigation Bar */}
       <motion.div

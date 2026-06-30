@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { PROJECTS } from '../data/projectsData'
-import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import { HiArrowLeft, HiArrowRight } from 'react-icons/hi'
 import { useInfiniteCarousel } from '../hooks/useInfiniteCarousel'
 import './ProjectDetailPage.css'
@@ -58,12 +58,29 @@ export default function ProjectDetailPage() {
 
   const clientName = project.title.includes(' — ') ? project.title.split(' — ')[0] : project.title
 
+  const canonicalPath = `/project/${id}/${category}`
+  const ogImage = project.screenshots?.[0]?.src
+    ? `https://dezolastudio.name.ng${project.screenshots[0].src}`
+    : undefined
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'CreativeWork',
+    name: project.title,
+    description: project.fullDesc,
+    about: project.category,
+    url: `https://dezolastudio.name.ng${canonicalPath}`
+  }
+
   return (
     <div className="project-detail-page">
-      <Helmet>
-        <title>{project.title} — Dezola Studio</title>
-        <meta name="description" content={project.fullDesc} />
-      </Helmet>
+      <SEO
+        title={project.title}
+        description={project.fullDesc}
+        canonicalPath={canonicalPath}
+        ogImage={ogImage}
+        ogType="article"
+        structuredData={structuredData}
+      />
 
       {/* Section A — Back Navigation Bar */}
       <motion.div 
@@ -180,7 +197,15 @@ export default function ProjectDetailPage() {
                   <span className="deliverable-num">{String(i + 1).padStart(2, '0')}</span>
                   <span className="deliverable-check">✓</span>
                 </div>
-                <span className="deliverable-text">{item}</span>
+                <span className="deliverable-title">{item.title}</span>
+                <p className="deliverable-desc">{item.desc}</p>
+                {item.tech && item.tech.length > 0 && (
+                  <div className="deliverable-tech">
+                    {item.tech.map((t, ti) => (
+                      <span key={ti} className="deliverable-tech-pill">{t}</span>
+                    ))}
+                  </div>
+                )}
               </motion.li>
             ))}
           </ul>

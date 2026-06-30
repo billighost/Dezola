@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { PROJECTS } from '../data/projectsData'
-import { Helmet } from 'react-helmet-async'
+import SEO from '../components/SEO'
 import './ProjectsPage.css'
 
 const FILTER_CATS = ['All', 'Branding', 'Web', 'Motion', 'Marketing']
@@ -60,10 +60,11 @@ export default function ProjectsPage() {
 
   return (
     <div className="projects-page dot-grid" style={{ paddingTop: 'var(--nav-height)', paddingBottom: '120px', minHeight: '100vh', background: 'var(--cream)' }}>
-      <Helmet>
-        <title>All Projects — Dezola Studio</title>
-        <meta name="description" content="View all of our creative projects including branding, web design, and digital marketing." />
-      </Helmet>
+      <SEO
+        title="All Projects"
+        canonicalPath="/projects"
+        description="View all of our creative projects including branding, web design, and digital marketing."
+      />
 
       {/* Hero Header Block */}
       <div className="projects-page-hero">
